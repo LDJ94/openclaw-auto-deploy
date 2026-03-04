@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>婴儿声音翻译器</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ee2b5b',
+            'background-light': '#fcf8f8',
+            'accent-blue': '#e0f2fe',
+            'accent-pink': '#fce7f3',
+            'accent-yellow': '#fef3c7',
+          },
+          fontFamily: {
+            display: ['"Plus Jakarta Sans"', '"Noto Sans SC"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
+      background-color: #fcf8f8;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .soft-shadow {
+      box-shadow: 0 10px 25px -5px rgba(238, 43, 91, 0.15);
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    @keyframes pulse-soft {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.03); }
+    }
+    .animate-pulse-soft {
+      animation: pulse-soft 2.5s ease-in-out infinite;
+    }
+    .page { 
+      display: none; 
+      min-height: calc(100vh - 80px);
+    }
+    .page.active { 
+      display: block; 
+    }
+    /* Mobile-first container */
+    .mobile-container {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #fcf8f8;
+      position: relative;
+    }
+    /* Fix for bottom nav */
+    .bottom-nav-fixed {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-container">
+    <!-- Header -->
+    <div class="flex items-center bg-transparent p-4 pb-2 justify-between" id="header">
+      <div class="w-12"></div>
+      <h2 class="text-slate-900 text-lg font-bold text-center">婴儿翻译器</h2>
+      <button class="flex items-center justify-center rounded-full h-12 w-12 bg-transparent">
+        <span class="material-symbols-outlined text-2xl text-slate-700">notifications</span>
+      </button>
+    </div>
+
+    <!-- Page: Home -->
+    <div class="page active" id="page-home">
+      <div class="flex flex-col items-center px-6 pt-8 pb-6">
+        <div class="relative w-44 h-44 mb-6">
+          <div class="absolute inset-0 bg-primary/10 rounded-full animate-pulse-soft"></div>
+          <div class="absolute inset-3 bg-primary/5 rounded-full"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="bg-gradient-to-tr from-accent-pink to-accent-blue w-28 h-28 rounded-full flex items-center justify-center soft-shadow">
+              <span class="material-symbols-outlined text-primary text-5xl">child_care</span>
+            </div>
+          </div>
+        </div>
+        <h1 class="text-slate-900 text-2xl font-bold text-center mb-2">听懂宝宝的心声</h1>
+        <p class="text-slate-500 text-sm text-center max-w-[260px] mb-6">AI 智能识别哭声，解析宝宝的饥饿、困倦或不适</p>
+        
+        <button onclick="showPage('recording')" class="w-full flex flex-col items-center justify-center gap-2 py-8 px-6 bg-primary text-white rounded-2xl soft-shadow active:scale-[0.98] transition-all mb-3">
+          <div class="bg-white/20 p-3 rounded-full">
+            <span class="material-symbols-outlined text-4xl font-bold">mic</span>
+          </div>
+          <span class="text-lg font-bold">一键录音翻译</span>
+        </button>
+        
+        <button onclick="showPage('result')" class="w-full flex items-center justify-center gap-2 py-4 px-6 bg-white border-2 border-slate-100 text-slate-700 rounded-xl active:scale-[0.98] transition-all">
+          <span class="material-symbols-outlined text-primary">upload_file</span>
+          <span class="text-base font-medium">上传音频文件</span>
+        </button>
+
+        <div class="mt-5 w-full bg-accent-yellow/50 p-3 rounded-xl flex items-center gap-3 border border-yellow-200">
+          <div class="bg-yellow-100 rounded-full p-1.5">
+            <span class="material-symbols-outlined text-amber-600 text-base">lightbulb</span>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-amber-800">温馨小贴士</p>
+            <p class="text-xs text-amber-700">保持环境安静，翻译效果更准确哦</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page: Recording -->
+    <div class="page" id="page-recording">
+      <div class="flex flex-col items-center justify-center min-h-[70vh] px-6">
+        <div class="relative w-56 h-56 mb-6">
+          <div class="absolute inset-0 bg-primary/10 rounded-full animate-pulse-soft"></div>
+          <div class="absolute inset-4 bg-primary/20 rounded-full animate-pulse"></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="bg-gradient-to-tr from-accent-pink to-accent-blue w-36 h-36 rounded-full flex items-center justify-center soft-shadow">
+              <span class="material-symbols-outlined text-primary text-6xl animate-pulse">mic</span>
+            </div>
+          </div>
+        </div>
+        <h2 class="text-xl font-bold text-slate-900 mb-1">正在录音...</h2>
+        <p class="text-slate-500 text-sm mb-8">请靠近宝宝的声音来源</p>
+        
+        <button onclick="showPage('result')" class="w-20 h-20 flex items-center justify-center bg-primary text-white rounded-full soft-shadow active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-4xl">stop</span>
+        </button>
+        <p class="mt-3 text-slate-400 text-xs">点击停止</p>
+      </div>
+    </div>
+
+    <!-- Page: Result -->
+    <div class="page" id="page-result">
+      <div class="flex flex-col items-center px-5 py-6">
+        <div class="w-full bg-gradient-to-br from-accent-pink to-accent-blue p-5 rounded-2xl soft-shadow mb-5">
+          <div class="text-center mb-3">
+            <span class="material-symbols-outlined text-primary text-5xl mb-1 block">child_care</span>
+            <h2 class="text-lg font-bold text-slate-900">宝宝可能想说</h2>
+          </div>
+          
+          <div class="bg-white/90 rounded-xl p-4 text-center mb-3">
+            <p class="text-2xl font-bold text-primary mb-1">我饿了</p>
+            <p class="text-slate-500 text-sm">宝宝可能感到饥饿</p>
+          </div>
+          
+          <div class="flex justify-center items-center gap-1.5">
+            <span class="text-slate-600 text-sm">置信度:</span>
+            <span class="text-primary font-bold">95%</span>
+          </div>
+        </div>
+        
+        <div class="w-full flex gap-2 mb-5">
+          <button onclick="alert('播放语音功能')" class="flex-1 flex items-center justify-center gap-1.5 py-3 bg-primary text-white rounded-xl text-sm font-medium">
+            <span class="material-symbols-outlined text-lg">volume_up</span>
+            <span>播放语音</span>
+          </button>
+          <button onclick="showPage('language')" class="flex-1 flex items-center justify-center gap-1.5 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-medium">
+            <span class="material-symbols-outlined text-lg">translate</span>
+            <span>换语言</span>
+          </button>
+        </div>
+        
+        <div class="w-full bg-accent-yellow/50 p-3 rounded-xl border border-yellow-200">
+          <p class="text-xs font-medium text-amber-800 mb-0.5">建议</p>
+          <p class="text-xs text-amber-700">可以尝试给宝宝喂奶</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page: Language -->
+    <div class="page" id="page-language">
+      <div class="px-5 py-4">
+        <div class="flex items-center mb-4">
+          <button onclick="showPage('result')" class="p-2 -ml-2">
+            <span class="material-symbols-outlined text-slate-700">arrow_back</span>
+          </button>
+          <h2 class="text-lg font-bold text-slate-900">语言设置</h2>
+        </div>
+        
+        <div class="space-y-2">
+          <button onclick="selectLang(this)" class="w-full flex items-center justify-between p-3.5 rounded-xl bg-primary/5 border-2 border-primary">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">🇨🇳</span>
+              <span class="text-slate-900 font-medium text-sm">简体中文</span>
+            </div>
+            <span class="material-symbols-outlined text-primary text-lg">check</span>
+          </button>
+          <button onclick="selectLang(this)" class="w-full flex items-center justify-between p-3.5 rounded-xl bg-white border border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">🇺🇸</span>
+              <span class="text-slate-900 font-medium text-sm">English</span>
+            </div>
+          </button>
+          <button onclick="selectLang(this)" class="w-full flex items-center justify-between p-3.5 rounded-xl bg-white border border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">🇯🇵</span>
+              <span class="text-slate-900 font-medium text-sm">日本語</span>
+            </div>
+          </button>
+          <button onclick="selectLang(this)" class="w-full flex items-center justify-between p-3.5 rounded-xl bg-white border border-slate-100">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">🇰🇷</span>
+              <span class="text-slate-900 font-medium text-sm">한국어</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page: History -->
+    <div class="page" id="page-history">
+      <div class="px-5 py-4">
+        <h2 class="text-lg font-bold text-slate-900 mb-4">历史记录</h2>
+        
+        <button onclick="showPage('result')" class="w-full bg-white p-3.5 rounded-xl soft-shadow text-left mb-2.5">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-medium text-slate-900 text-sm">我困了</span>
+            <span class="text-xs text-slate-400">10:30</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-500">中文</span>
+            <span class="text-xs text-primary font-medium">88%</span>
+          </div>
+        </button>
+        
+        <button onclick="showPage('result')" class="w-full bg-white p-3.5 rounded-xl soft-shadow text-left">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-medium text-slate-900 text-sm">I want milk</span>
+            <span class="text-xs text-slate-400">昨天</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-500">English</span>
+            <span class="text-xs text-primary font-medium">92%</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav-fixed glass-effect border-t border-slate-100 px-4 pb-6 pt-2 flex justify-between items-center" id="bottom-nav">
+      <button onclick="showPage('home')" class="flex flex-col items-center gap-0.5 p-2 text-primary" id="nav-home">
+        <span class="material-symbols-outlined fill">home</span>
+        <p class="text-[10px] font-bold">首页</p>
+      </button>
+      <button onclick="showPage('history')" class="flex flex-col items-center gap-0.5 p-2 text-slate-400" id="nav-history">
+        <span class="material-symbols-outlined">history</span>
+        <p class="text-[10px] font-medium">记录</p>
+      </button>
+      <button onclick="alert('百科功能开发中')" class="flex flex-col items-center gap-0.5 p-2 text-slate-400" id="nav-wiki">
+        <span class="material-symbols-outlined">auto_awesome</span>
+        <p class="text-[10px] font-medium">百科</p>
+      </button>
+      <button onclick="alert('我的页面开发中')" class="flex flex-col items-center gap-0.5 p-2 text-slate-400" id="nav-profile">
+        <span class="material-symbols-outlined">person</span>
+        <p class="text-[10px] font-medium">我的</p>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function showPage(pageName) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      
+      // Show selected page
+      document.getElementById('page-' + pageName).classList.add('active');
+      
+      // Update header/bottom nav visibility
+      const header = document.getElementById('header');
+      const bottomNav = document.getElementById('bottom-nav');
+      
+      if (pageName === 'recording') {
+        header.style.display = 'none';
+        bottomNav.style.display = 'none';
+      } else {
+        header.style.display = 'flex';
+        bottomNav.style.display = 'flex';
+      }
+      
+      // Update nav active state
+      document.querySelectorAll('#bottom-nav button').forEach(btn => {
+        btn.classList.remove('text-primary');
+        btn.classList.add('text-slate-400');
+      });
+      
+      const navMap = { 'home': 'nav-home', 'history': 'nav-history' };
+      if (navMap[pageName]) {
+        const navBtn = document.getElementById(navMap[pageName]);
+        navBtn.classList.remove('text-slate-400');
+        navBtn.classList.add('text-primary');
+      }
+      
+      // Scroll to top
+      window.scrollTo(0, 0);
+    }
+    
+    function selectLang(btn) {
+      document.querySelectorAll('#page-language button').forEach(b => {
+        b.className = 'w-full flex items-center justify-between p-3.5 rounded-xl bg-white border border-slate-100';
+      });
+      btn.className = 'w-full flex items-center justify-between p-3.5 rounded-xl bg-primary/5 border-2 border-primary';
+      setTimeout(() => showPage('result'), 200);
+    }
+  </script>
+</body>
+</html>

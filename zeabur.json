@@ -1,0 +1,16 @@
+{
+  "$schema": "https://zeabur.com/zeabur.json",
+  "build": {
+    "builder": "nixpacks",
+    "options": {
+      "node": "18"
+    }
+  },
+  "deploy": {
+    "command": "node backend/src/index.js",
+    "buildCommand": "npm install",
+    "installCommand": "npm install",
+    "framework": "node",
+    "port": 3001
+  }
+}
