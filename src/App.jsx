@@ -623,13 +623,11 @@ export default function App() {
             languages={languages}
             isPlaying={isPlaying}
             onLanguageChange={(langCode) => {
-              // 当用户切换语言时，重新生成对应语言的结果
-              const langResults = mockResults[langCode] || mockResults.zh
-              const randomResult = langResults[Math.floor(Math.random() * langResults.length)]
+              // 只切换语言，不重新生成结果
+              setTargetLanguage(langCode)
+              // 更新结果中的目标语言
               setResult({
-                ...randomResult,
-                id: Date.now(),
-                createdAt: new Date().toISOString(),
+                ...result,
                 targetLanguage: langCode
               })
             }}
