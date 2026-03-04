@@ -128,3 +128,31 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Baby Translator running on port ${PORT}`)
 })
+
+// Stats endpoint - gets token usage from environment
+app.get('/api/stats', (req, res) => {
+  const today = new Date().toISOString().split('T')[0]
+  
+  res.json({
+    date: today,
+    session: {
+      model: process.env.OPENCLAW_MODEL || 'minimax-portal/MiniMax-M2.5',
+    },
+    tokens: {
+      input: process.env.STATS_TOKENS_INPUT || 0,
+      output: process.env.STATS_TOKENS_OUTPUT || 0,
+    },
+    messages: {
+      count: process.env.STATS_MESSAGES || 0,
+      words: process.env.STATS_WORDS || 0,
+    },
+    tasks: {
+      completed: process.env.STATS_TASKS_COMPLETED || 0,
+      pending: process.env.STATS_TASKS_PENDING || 0,
+    },
+    skills: {
+      newToday: process.env.STATS_SKILLS_NEW || 0,
+      total: 10,
+    }
+  })
+})
