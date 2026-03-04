@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node backend/src/index.js",
+    "start:prod": "node backend/src/index.js",
+    "build": "vite build",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testTimeout=10000"
   },
   "dependencies": {

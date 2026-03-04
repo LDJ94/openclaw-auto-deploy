@@ -7,8 +7,8 @@
     }
   },
   "deploy": {
-    "command": "node backend/src/index.js",
-    "buildCommand": "npm install",
+    "command": "npm run start:prod",
+    "buildCommand": "npm install && npm run build",
     "installCommand": "npm install",
     "framework": "node",
     "port": 3001
