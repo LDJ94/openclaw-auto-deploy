@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from 'react'
 function BottomNav({ activeTab, onTabChange }) {
   const tabs = [
     { id: 'home', icon: 'home', label: '首页' },
-    { id: 'record', icon: 'mic', label: '录音' },
+    { id: 'tips', icon: 'lightbulb', label: '育儿贴士' },
     { id: 'history', icon: 'history', label: '历史' },
     { id: 'settings', icon: 'settings', label: '设置' },
   ]
@@ -252,32 +252,97 @@ function HistoryPage({ records, onSelectRecord }) {
   )
 }
 
+// 育儿贴士页面
+function ParentingTipsPage() {
+  const tips = [
+    { icon: 'child_care', title: '宝宝哭闹的原因', content: '宝宝哭闹可能是饥饿、困倦、不舒服或需要安抚' },
+    { icon: 'hotel', title: '如何判断宝宝困了', content: '宝宝困了会揉眼睛、打哈欠、变得烦躁' },
+    { icon: 'restaurant', title: '喂养知识', content: '新生儿按需喂养，一般2-3小时一次' },
+    { icon: 'bedtime', title: '睡眠建议', content: '0-3个月宝宝每天需要14-17小时睡眠' },
+    { icon: 'thermostat', title: '温度适宜', content: '室温保持在24-26度最适宜宝宝' },
+    { icon: 'medical_services', title: '健康观察', content: '定期测量体温，关注宝宝精神状态' },
+  ]
+  
+  return (
+    <div className="px-4 py-4 pb-24">
+      <h2 className="text-xl font-bold text-gray-800 mb-4">育儿贴士</h2>
+      
+      <div className="space-y-3">
+        {tips.map((tip, index) => (
+          <div key={index} className="bg-white p-4 rounded-xl shadow-sm border border-pink-50">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-pink-500">{tip.icon}</span>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-1">{tip.title}</h3>
+                <p className="text-sm text-gray-500">{tip.content}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // 设置页
 function SettingsPage() {
-  const [targetLang, setTargetLang] = useState('zh')
-  
   return (
     <div className="px-4 py-4 pb-24">
       <h2 className="text-xl font-bold text-gray-800 mb-4">设置</h2>
       
-      <div className="bg-white rounded-xl shadow-sm border border-pink-50 mb-4 overflow-hidden">
-        <div className="p-4 border-b border-pink-50">
-          <h3 className="font-semibold text-gray-700">默认翻译语言</h3>
-        </div>
-        <div className="p-4">
-          <select 
-            value={targetLang}
-            onChange={(e) => setTargetLang(e.target.value)}
-            className="w-full p-3 bg-gray-50 rounded-lg border-none focus:ring-2 focus:ring-pink-300 text-gray-700"
-          >
-            <option value="zh">🇨🇳 中文</option>
-            <option value="en">🇺🇸 English</option>
-            <option value="ja">🇯🇵 日本語</option>
-            <option value="ko">🇰🇷 한국어</option>
-          </select>
+      {/* 用户头像和信息 */}
+      <div className="bg-white rounded-xl shadow-sm border border-pink-50 p-4 mb-4">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-pink-200 to-blue-200 rounded-full flex items-center justify-center">
+            <span className="material-symbols-outlined text-3xl text-pink-500">person</span>
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-800">用户</h3>
+            <p className="text-sm text-gray-500">未绑定手机号</p>
+          </div>
         </div>
       </div>
       
+      {/* 账号关联 */}
+      <div className="bg-white rounded-xl shadow-sm border border-pink-50 mb-4 overflow-hidden">
+        <div className="p-4 border-b border-pink-50">
+          <h3 className="font-semibold text-gray-700">账号关联</h3>
+        </div>
+        <div className="p-2">
+          <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">📱</span>
+              <span className="text-gray-700">手机号</span>
+            </div>
+            <span className="material-symbols-outlined text-gray-400">chevron_right</span>
+          </button>
+          <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">💬</span>
+              <span className="text-gray-700">微信</span>
+            </div>
+            <span className="text-gray-400 text-sm">未绑定</span>
+          </button>
+          <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">🎵</span>
+              <span className="text-gray-700">抖音</span>
+            </div>
+            <span className="text-gray-400 text-sm">未绑定</span>
+          </button>
+          <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">📕</span>
+              <span className="text-gray-700">小红书</span>
+            </div>
+            <span className="text-gray-400 text-sm">未绑定</span>
+          </button>
+        </div>
+      </div>
+      
+      {/* 关于 */}
       <div className="bg-white rounded-xl shadow-sm border border-pink-50 overflow-hidden">
         <div className="p-4 border-b border-pink-50">
           <h3 className="font-semibold text-gray-700">关于</h3>
@@ -475,8 +540,9 @@ export default function App() {
     if (tab === 'home') {
       setCurrentPage('home')
       setResult(null)
-    } else if (tab === 'record') {
-      startRecording()
+    } else if (tab === 'tips') {
+      setCurrentPage('tips')
+      setResult(null)
     } else if (tab === 'history') {
       setCurrentPage('history')
       setResult(null)
@@ -523,6 +589,8 @@ export default function App() {
             }}
           />
         )
+      case 'tips':
+        return <ParentingTipsPage />
       case 'settings':
         return <SettingsPage />
       default:
