@@ -23,10 +23,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-// AI Translation using Anthropic Claude
+// AI Translation using Google Gemini
 async function translateWithAI(audioDescription, targetLanguage) {
-  const apiKey = process.env.ANTHROPIC_AUTH_TOKEN
-  const baseUrl = process.env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com'
+  const apiKey = process.env.GEMINI_API_KEY
   
   const languageNames = {
     'zh': '中文',
@@ -51,28 +50,26 @@ async function translateWithAI(audioDescription, targetLanguage) {
 只需要返回JSON，不要其他内容。`
 
   try {
-    const response = await fetch(`${baseUrl}/v1/messages`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
-        messages: [
-          { role: 'user', content: prompt }
-        ]
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1024,
+        }
       })
     })
     
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`)
+      throw new Error(`Gemini API Error: ${response.status}`)
     }
     
     const data = await response.json()
-    const content = data.content[0].text
+    const content = data.candidates[0].content.parts[0].text
     
     // 解析 JSON 响应
     const jsonMatch = content.match(/\{[\s\S]*\}/)
